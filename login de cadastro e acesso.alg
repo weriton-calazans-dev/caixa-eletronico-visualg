@@ -11,7 +11,7 @@ erroSenha, erro, erro1, erro2, passa: logico
 
 saldo : real
 
-//aria cripitografada de transferencia ------------------------------
+//ária criptografada de transferência ------------------------------
 pessoaReceber, senhaDigitada, valorEmviado, contador1 :caractere
 
 contador, contador2, codigo, codigo0 :inteiro
@@ -24,31 +24,42 @@ escreval ("-----------------------------------------------------")
 
 fimprocedimento
 inicio
-
+//inicializa as variáves para fazer a primeira comparação do enquanto
+//e derfinir o login de acesso para o usuária
 nomeUsuario <- "Weriton"
 agencia <- "0001"
 conta <- "12345"
 senha <- 2026
 saldo <- 1250
- repita
-linhaSeparacao()
-escreval ("         Bem Vindo ao Nubank        ")
-linhaSeparacao()
-escreval ("")
-escreval ("  Digite [1] Para Acessa Sua Conta  ")
-escreval ("")
-escreval ("  Digite [2] Para se Cadastra    ")
-leia(acesso0)
-//primeira area de acesso
+agencia0 <- ""
+conta0 <- ""
+senha2 <- 0
+// começando o tentanovamente como SIM para poder entra no enquanto
+tentaNovamente <- "SIM"
 
+enquanto (tentaNovamente = "SIM") e ((agencia <> agencia0) ou (conta <> conta0) ou ( senha <> senha2)) faca
 
-se (acesso0 = "1") entao
-   //repetição de seguraça com [enquanto]
-   tentaNovamente <- "SIM"
-   enquanto (tentaNovamente = "SIM") e ((agencia <> agencia0) ou (conta <> conta0) ou ( senha <> senha2)) faca
+   //reseta as variáveis para não entrar com loop infinito
+   erro <- falso
+   erro1 <- falso
+   erro2 <- falso
+   passa <- falso
+   linhaSeparacao()
+   escreval ("         Bem-Vindo ao Nubank        ")
+   linhaSeparacao()
+   escreval ("")
+   escreval ("  Digite [1] Para Acessar Sua Conta  ")
+   escreval ("")
+   escreval ("  Digite [2] Para se Cadastrar    ")
+   leia(acesso0)
+
+   //primeira area de acesso
+   se (acesso0 = "1") entao
+
+      //repetição de segurança com [enquanto]
       limpatela
       linhaSeparacao()
-      escreval ("    Digite o Número da Sua Agencia  ")
+      escreval ("    Digite o Número da Sua Agência  ")
       leia (agencia0)
       linhaSeparacao()
       escreval ("    Digite o Número da Sua Conta    ")
@@ -67,7 +78,7 @@ se (acesso0 = "1") entao
          fimse
       fimpara
 
-      //validando o acesso da conta se digito so número e transforma em [asc] liguagem so computador
+      //validando o acesso da conta se digitou só número e transforma em [asc] linguagem do computador
       para contador0 <- 1 ate compr(conta0) faca
          conta1 <- asc (copia(conta0, contador0, 1))
          se (conta1 < 48) ou (conta1 > 57) entao
@@ -77,65 +88,86 @@ se (acesso0 = "1") entao
          fimse
       fimpara
 
-      //validando o acesso da senha se digito so número e transforma em [asc] liguagem so computador
+      //validando o acesso da senha se digitou so número e transforma em [asc] linguagem do computador
       para contador0 <- 1 ate compr(senha0) faca
          senha1 <- asc(copia(senha0, contador0, 1))
          se (senha1 < 48) ou (senha1 > 57) entao
             erro2 <- verdadeiro
          senao
-            senha2 <- caracpnum(senha0)
+
             passa <- verdadeiro
          fimse
 
       fimpara
 
+      // validação completa da senha e transformando de caractere para número em segurança a senha  completo
+      se (erro2 = falso) entao
+
+         senha2 <- caracpnum(senha0)
+
+      fimse
+
+      // validado se o usuário nao digitou letras e a quantedadi de digito certo separadamente para exibir onde
+      //realmente o campo que esta errado
       se (erro = verdadeiro) ou (compr(agencia0) <> 4)entao
 
-         escreval ("ERRO! Número da agencia invalida.")
+         escreval ("ERRO! Número da agência inválida.")
 
       fimse
 
       se (erro1 = verdadeiro) ou (compr(conta0) <> 5) entao
 
-         escreval ("ERRO! Número da conta invalida")
+         escreval ("ERRO! Número da conta inválida")
 
       fimse
 
       se (erro2 = verdadeiro) ou (compr(senha0) <> 4) entao
 
-         escreval ("ERRO! Senha invalida")
+         escreval ("ERRO! Senha inválida")
       fimse
-      //validação tanto do se é tudo número e o tamanho esta correto
-      //
-      se (erro = verdadeiro) ou (compr(agencia0) <> 4) ou (erro1 = verdadeiro) ou (compr(conta0) <> 5) ou (erro2 = verdadeiro) ou (compr(senha0) <> 4) entao
 
-         escreval ("Gostaria de tenta novamente")
-         leia (tentaNovamente)
-         tentaNovamente <- maiusc(tentaNovamente)
+      //se o usuário errar mostra a opção de tentar novamente
+      se (agencia <> agencia0) e (conta <> conta0) e ( senha <> senha2) entao
+
+         //para da a boas-vindas a usuário
+         limpatela
+         linhaSeparacao
+         escreval ("Login efetuado com sucesso")
+         linhaSeparacao
+
       senao
-
-         //PARA ESTORA O LAÇO DE REPETIÇÃO DO ENQUANTO
-
+         linhaseparacao
+         escreval ("Dados incorretos ou inválidos!")
+         linhaSeparacao
+         escreval ("Gostaria de tenta novamenter")
+         escreval ("     Digite [SIM] para tenta novamenter ")
+         escreval ("")
+         escreval ("     Digite [NÃO] para Sair    ")
+         leia (tentaNovamente)
       fimse
-   fimenquanto
-senao
-   escreval ("Opção invalida!")
-   linhaSeparacao()
-   escreval ("Gostaria de tentar novamente")
-   linhaSeparacao()
-   escreval ("     Digite [SIM] para tenta novamente ")
-   escreval ("")
-   escreval ("     Digite [NÃO] para Sair    ")
-   leia (validacao)
-   validacao <- maiusc(validacao)
-fimse
- ate (validacao = "NAO")
+
+   senao
+      //para não fechar o programa se o usuário escolher a opção errada e fazer ele tentar novamente
+      escreval ("Opção inválida!")
+      linhaSeparacao()
+      escreval ("Gostaria de tentar novamenter")
+      linhaSeparacao()
+      escreval ("     Digite [SIM] para tenta novamenter ")
+      escreval ("")
+      escreval ("     Digite [NÃO] para Sair    ")
+      leia (tentaNovamente)
+      tentaNovamente <- maiusc(tentaNovamente)
+   fimse
+   // para  transformar tudo em maiúsculo para facilitar o que o usuário digitou
+   tentaNovamente <- maiusc(tentaNovamente)
+
+fimenquanto
 
 // validando agencia, conta e senha
 se (agencia = agencia0) e (conta = conta0) e ( senha = senha2) e (passa = verdadeiro) entao
    limpatela
    linhaSeparacao()
-   escreval ("      Bem Vindo a Sua Conta      ")
+   escreval ("      Bem-Vindo a Sua Conta      ")
    escreval ("------------",nomeUsuario,"------------")
    linhaSeparacao()
    escreval ("      Digiti [1] Para Ver Saldo   ")
