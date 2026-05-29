@@ -63,8 +63,7 @@ enquanto (tentaNovamente = "SIM") e ((agencia <> agencia0) ou (conta <> conta0) 
    linhaSeparacao()
    escreval ("")
    escreval ("  Digite [1] Para Acessar Sua Conta  ")
-   escreval ("")
-   escreval ("  Digite [2] Para se Cadastrar    ")
+
    leia(acesso0)
 
    //primeira area de acesso
@@ -266,21 +265,21 @@ enquanto (tentaNovamente2 = "SIM") faca
 
       //area de fechamento do programa
       se (acesso1 = "3") entao
-      
+
          escreval("Saindo da conta. Até logo!")
          tentaNovamente2 <- "NAO"
-         
+
       fimse
-      
+
       //area de segurança. tudo que vinher do acesso1 diferente disso cai nesse bloco de validação de erro
       se (acesso1 <> "1") e (acesso1 <> "2") e (acesso1 <> "3") entao
-      
-        linhaSeparacao()
-        escreval ("Opção inválida!")
-        linhaSeparacao()
-        tentaNovamente
-        leia(tentaNovamente2)
-        tentaNovamente2 <- maiusc(tentaNovamente2)
+
+         linhaSeparacao()
+         escreval ("Opção inválida!")
+         linhaSeparacao()
+         tentaNovamente
+         leia(tentaNovamente2)
+         tentaNovamente2 <- maiusc(tentaNovamente2)
       fimse
    fimse
 fimenquanto
@@ -310,38 +309,62 @@ se (transferenciaMaius = "SIM") entao
       senhaDigitada <- maiusc(senhaDigitada)
 
       para contador3 <- 1 ate compr(pessoaReceber) faca
-         contador4 <- copia (pessoaReceber, contador3, 1)
+
          codigo1 <- asc(copia(pessoaReceber, contador3, 1))
+
+         se (codigo1 < 65) ou (codigo1 > 90) entao
+            // validado se o usuario digito apenas letras
+            erro <- verdadeiro
+
+         fimse
       fimpara
-      se (codigo1 < 65) ou (codigo1 > 90) entao
-         // validado se o usuario digito apenas letras
-         escreval ("Erro! Nome de pessoa invalida")
-         escreval ("   Você digito número  ")
-         escreval ("Digiti [SIM] Para fazer nova transferencia.")
-         escreval ("Digiti [NÃO] para Sair.")
+
+      se (erro = verdadeiro) entao
+         escreval ("Erro! Nome de pessoa inválido.")
+         escreval ("Você digitou números ou caracteres especiais.")
+         escreval ("Digite [SIM] Para fazer nova transferência.")
+         escreval ("Digite [NÃO] para Sair.")
          leia (novaTransferencia)
+      fimse
 
-      senao
+      //area criptografada   parte so exercício
+      //mostrando na tela a letra por letra e o código dela mais 2
+      para contador <- 1 ate compr(senhaDigitada) faca
+         contador1 <-   copia (senhaDigitada, contador, 1)
+         codigo <- asc (copia (senhaDigitada, contador, 1))
 
-         //area criptografada
-         para contador <- 1 ate compr(senhaDigitada) faca
-            contador1 <-   copia (senhaDigitada, contador, 1)
-            codigo <- asc (copia (senhaDigitada, contador, 1))
+         escreval ("caractere original: ",contador1," -> código Criptografado: ", codigo + 2)
+         escreval ("")
 
-            escreval ("caractere original: ",contador1," -> código Criptografado: ", codigo + 2)
-            escreval ("")
+      fimpara
 
-         fimpara
+      para contador2 <- 1 ate compr(valorEmviado) faca
+         codigo0 <- asc(copia(valorEmviado, contador2, 1))
 
-         para contador2 <- 1 ate compr(valorEmviado) faca
-            codigo0 <- asc(copia(valorEmviado, contador2, 1))
-         fimpara
          //validando se o usuario digitor so numero
          se (codigo0 < 48) ou (codigo0 > 57) entao
 
-            escreval ("ERRO! Você digito letra.")
-            erroSenha <- falso
-            escreval (" Seu saldo e de: ",saldo)
+            erro1 <- verdadeiro
+
+         fimse
+      fimpara
+
+      se (errr1 = verdadeiro) entao
+
+         escreval ("ERRO! Você digito letra.")
+         escreval (" Seu saldo e de: ",saldo)
+         escreval ("Deseja Realiza Nova Transação Via Pix?")
+         escreval ("Digiti [SIM] Para fazer nova transferencia.")
+         escreval ("Digiti [NÃO] para Sair.")
+         leia (novaTransferencia)
+         
+      senao
+         //validando se o valor digitado pelo usuario é menor que o saldo
+         valorEmviado0 <- caracpnum(valorEmviado)
+
+         se(valorEmviado0 > saldo) entao
+            escreval("Saldo insuficiente para essa transação")
+            escreval (" Seu saldo é de: ",saldo)
             escreval ("Deseja Realiza Nova Transação Via Pix?")
             escreval ("Digiti [SIM] Para fazer nova transferencia.")
             escreval ("Digiti [NÃO] para Sair.")
@@ -349,46 +372,35 @@ se (transferenciaMaius = "SIM") entao
 
          senao
 
-            //validando se o valor digitado pelo usuario é menor que o saldo
-            valorEmviado0 <- caracpnum(valorEmviado)
+            //se o valor for meno que o saldo val confima a transferencia
+            linhaSeparacao()
+            escreval ("Transação Efetuada Com Sucesso")
+            linhaSeparacao()
+            escreval (pessoaReceber," Recebeu o Valor")
+            escreval ("")
+            escreval ( "R$ ",valorEmviado0)
+            escreval ("")
+            escreval ("Enviado por: ",nomeUsuario)
+            linhaSeparacao()
+            
+            saldo <- saldo - valorEmviado0
+            
+            escreval ("O Seu Saldo é: ",saldo)
+            linhaSeparacao()
+            escreval ("Deseja Realiza Nova Transação Via Pix?")
+            escreval ("Digiti [SIM] Para fazer nova transferencia.")
+            escreval ("Digiti [NÃO] para Sair.")
+            leia (novaTransferencia)
 
-            se(valorEmviado0 > saldo) entao
-               escreval("Saldo insuficiente para essa transação")
-               escreval (" Seu saldo é de: ",saldo)
-               escreval ("Deseja Realiza Nova Transação Via Pix?")
-               escreval ("Digiti [SIM] Para fazer nova transferencia.")
-               escreval ("Digiti [NÃO] para Sair.")
-               leia (novaTransferencia)
-
-            senao
-
-               //se o valor for meno que o saldo val confima a transferencia
-               linhaSeparacao()
-               escreval ("Transação Efetuada Com Sucesso")
-               linhaSeparacao()
-               escreval (pessoaReceber," Recebeu o Valor")
-               escreval ("")
-               escreval ( "R$ ",valorEmviado0)
-               escreval ("")
-               escreval ("Enviado por: ",nomeUsuario)
-               linhaSeparacao()
-               saldo <- saldo - valorEmviado0
-               escreval ("O Seu Saldo é: ",saldo)
-               linhaSeparacao()
-               escreval ("Deseja Realiza Nova Transação Via Pix?")
-               escreval ("Digiti [SIM] Para fazer nova transferencia.")
-               escreval ("Digiti [NÃO] para Sair.")
-               leia (novaTransferencia)
-
-            fimse
          fimse
-
-
       fimse
 
-      novaTransferencia <- maiusc(novaTransferencia)
 
-   fimenquanto
+   fimse
+
+   novaTransferencia <- maiusc(novaTransferencia)
+
+fimenquanto
 fimse
 
 
