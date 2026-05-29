@@ -30,7 +30,7 @@ inicio
 escreval ("-----------------------------------------------------")
 
 fimprocedimento
-inicio
+
 
 procedimento tentarNovamente()
 inicio
@@ -38,6 +38,8 @@ escreval ("     Digite [SIM] para tenta novamenter ")
 escreval ("")
 escreval ("     Digite [NÃO] para Sair    ")
 fimprocedimento
+
+inicio
 //inicializa as variáves para fazer a primeira comparação do enquanto
 //e derfinir o login de acesso para o usuária
 nomeUsuario <- "Weriton"
@@ -312,7 +314,8 @@ se (transferenciaMaius = "SIM") entao
 
          codigo1 <- asc(copia(pessoaReceber, contador3, 1))
 
-         se (codigo1 < 65) ou (codigo1 > 90) entao
+         //codigo de [A] ate [Z] e do espaço [ ]
+         se (codigo1 < 65) ou (codigo1 > 90) e (codigo1 <> 32) entao
             // validado se o usuario digito apenas letras
             erro <- verdadeiro
 
@@ -349,7 +352,7 @@ se (transferenciaMaius = "SIM") entao
          fimse
       fimpara
 
-      se (errr1 = verdadeiro) entao
+      se (erro1 = verdadeiro) entao
 
          escreval ("ERRO! Você digito letra.")
          escreval (" Seu saldo e de: ",saldo)
