@@ -11,7 +11,11 @@ algoritmo "Sistema de Caixa Eletrônico com Histórico de Extrato (Banco)"
 // =========================================================================
 var
    nome: vetor [1..5] de caractere
-   cadastro, sair: caractere
+   senha: vetor [1..5] de caractere
+   cadastro: caractere
+   sair: caractere
+   enter: caractere
+   conta: inteiro
    i:inteiro
    continuar: logico
 
@@ -32,6 +36,21 @@ inicio
       fimse
    fimpara
 
+   retorne valido
+fimfuncao
+
+funcao validaNumero (numero: caractere) : logico
+var
+   valido: logico
+   i,codigo: inteiro
+inicio
+   valido <- verdadeiro
+   para i <- 1 ate compr(numero) faca
+      codigo <- asc(copia(numero, i, 1))
+      se (codigo < 48) ou (codigo > 57) entao
+          valido <- falso
+      fimse
+   fimpara
    retorne valido
 fimfuncao
 
@@ -94,5 +113,48 @@ inicio
          ate (continuar = verdadeiro)
       fimse
    ate (continuar = falso)
+   
+   repita
+      continuar <- falso
+      escreval ("--------------------------------------------")
+      escreval ("    Cadastre sua senha com apenas 4 número  ")
+      leia(cadastro)
+      se (validaNumero(cadastro)) e (compr(cadastro) = 4) e (cadastro <> "") entao
+         escreval ("    Senha cadastrada com sucesso.   ")
+         para i <- 1 ate 5 faca
+            se (senha[i] = "") entao
+               senha[i] <- cadastro
+               interrompa
+            fimse
+         fimpara
+         continuar <- verdadeiro
+      fimse
+      se (validaNumero(cadastro) = falso) ou (compr(cadastro) <> 4) entao
+         escreval ("------------------------------------------")
+         escreval ("             Senha inválida!              ")
+         escreval ("    Deseja tentar novamente [ SIM/NÃO ]   ")
+         escreval ("------------------------------------------")
+         leia (sair)
+         sair <- maiusc(sair)
+         se validaLetras(sair) e (sair = "SIM") entao
+            limpatela
+            continuar <- verdadeiro
+         senao
+            se (validaLetras(sair) = falso) ou (sair <> "NÃO") ou (sair <> "NAO") entao
+               repita
+                  escreval ("    Erro! digite apenas [ SIM/NÃO ] para conatinuar.  ")
+                  leia (sair)
+                  sair <- maiusc(sair)
+               ate (sair = "SIM") ou (sair = "NAO") ou (sair = "NÃO")
+            se (sair = "SIM") entao
+               continuar <- verdadeiro
+            senao
+               escreval ("    Encerando o programa com segurança.  ")
+               fimalgoritmo
+            fimse
+         fimse
+      fimse
+   ate (continuar = falso)
+   
 
 fimalgoritmo
