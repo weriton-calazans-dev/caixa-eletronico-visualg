@@ -11,26 +11,26 @@ algoritmo "Sistema de Caixa Eletrônico com Histórico de Extrato (Banco)"
 // =========================================================================
 var
    nome: vetor [1..5] de caractere
-   conta: vetor [1..5] de inteiro
+   conta: vetor [1..5] de caractere
    senha: vetor [1..5] de caractere
    agencia: caractere
    cadastro: caractere
    cadastroSenha: caractere
-   conta_padrao: inteiro
    sair: caractere
-   opcao: caractere
-   enter: caractere
+   opcao: inteiro
+   entrada_usuario: caractere
+   entrada_agencia: caractere
+   entrada_conta: caractere
+   entrada_senha: caractere
+   posicao: inteiro
+   saldo: real
    i:inteiro
-   continuar: logico
+   continuar,encontrado: logico
+   
 procedimento opcaoEntrada()
 inicio
    escreval ("    [1] Para acessar sua conta. ")
-   escreval ("    [2] Para fazer uma transferência via pix. ")
-   escreval ("    [3] para ver saldo.   ")
-   escreval ("    [4] para extrato de saída via pix. ")
-   escreval ("    [5] para extrato de depósito. ")
-   escreval ("    [6] Para sair.  ")
-   leia(opcao)
+   leia(entrada_usuario)
 fimprocedimento
 funcao validaLetras(texto: caractere) : logico
 var
@@ -70,7 +70,7 @@ fimfuncao
 procedimento organizarVetor()
 var
    chave_nome: caractere
-   chave_conta: inteiro
+   chave_conta: caractere
    chave_senha: caractere
    i, j: inteiro
 inicio
@@ -104,12 +104,12 @@ inicio
 
    //área de cadastrar none do usuário
      agencia <- "0001"
-     conta[1] <- 12345
-     conta[2] <- 12346
-     conta[3] <- 12347
-     conta[4] <- 12348
-     conta[5] <- 12349
-
+     conta[1] <- "12345"
+     conta[2] <- "12346"
+     conta[3] <- "12347"
+     conta[4] <- "12348"
+     conta[5] <- "12349"
+     saldo <- 3000,00
 repita
    continuar <- falso
    repita
@@ -124,8 +124,6 @@ repita
          escreval ("----------------------------------------------------------")
          escreval ("    Nome '",cadastro,"' cadastrado com sucesso.  ")
          escreval ("----------------------------------------------------------")
-         escreval ("    Pressione Enter para continuar...  ")
-         leia (enter)
          
          para i <- 1 ate 5 faca
             se (nome[i] = "") entao
@@ -170,6 +168,7 @@ repita
       escreval ("--------------------------------------------")
       escreval ("    Cadastre sua senha com apenas 4 números  ")
       leia(cadastroSenha)
+      
       se (validaNumero(cadastroSenha)) e (compr(cadastroSenha) = 4) e (cadastroSenha <> "") entao
          escreval ("    Senha cadastrada com sucesso.   ")
          para i <- 1 ate 5 faca
@@ -212,17 +211,17 @@ repita
          fimse
       fimse
    ate (continuar = verdadeiro)
+   
    para i <- 1 ate 5 faca
       se (nome[i] = cadastro) entao
          limpatela
+         escreval ("Cadastro efetuado com sucesso. ")
          escreval ("-----------------------------------------")
          escreval ("agencia: ",agencia)
          escreval ("conta: ",conta[i])
          escreval ("usuário: ",nome[i])
          escreval ("senha: ",senha[i])
          escreval ("-----------------------------------------")
-         escreval ("Cadastro efetuado com sucesso. ")
-         escreval ("")
          escreval ("Salve seus dados para acessar sua conta. ")
          escreval ("-----------------------------------------")
       fimse
@@ -250,6 +249,119 @@ repita
    fimse
 
 ate (sair = "NAO")
+
+enquanto (entrada_usuario = "1") faca
+   limpatela
+   escreval ("-------------------------------")
+   escreval ("    Digite o nome do usuário   ")
+   leia(entrada_usuario)
+   escreval ("-------------------------------")
+   escreval ("    Digite sua agencia    ")
+   leia(entrada_agencia)
+   escreval ("-------------------------------")
+   escreval ("    Digite sua conta    ")
+   leia(entrada_conta)
+   escreval ("-------------------------------")
+   escreval ("    Digite sua senha   ")
+   leia(entrada_senha)
+
+   entrada_usuario <- maiusc(entrada_usuario)
+   encontrado <- falso
+   se (validaLetras(entrada_usuario)) e (entrada_usuario <> "") entao
+      para i <- 1 ate 5 faca
+         se (entrada_usuario = nome[i]) entao
+            encontrado <- verdadeiro
+            posicao <- i
+            interrompa
+         fimse
+      fimpara
+   fimse
+
+   se (validaLetras(entrada_agencia) = verdadeiro) entao
+      para i <- 1 ate 5 faca
+         se (entrada_agencia = agencia) entao
+            encontrado <- verdadeiro
+            interrompa
+         fimse
+      fimpara
+   fimse
+
+   se (validaNumero(entrada_conta) = verdadeiro) entao
+      para i <- 1 ate 5 faca
+         se (entrada_conta = conta[i]) entao
+            encontrado <- verdadeiro
+            interrompa
+         fimse
+      fimpara
+   fimse
+
+   se (validaNumero(entrada_senha) = verdadeiro) entao
+      para i <- 1 ate 5 faca
+         se (entrada_senha = senha[i]) entao
+            encontrado <- verdadeiro
+            interrompa
+         fimse
+      fimpara
+   fimse
+   se (encontrado = verdadeiro) entao
+      limpatela
+      escreval ("--------------------------------")
+      escreval ("    Bem-Vindo ",nome[posicao])
+      escreval ("    [1] Para ver saldo.   ")
+      escreval ("    [2] Para fazer uma transferência via pix.  ")
+      escreval ("    [3] para extrato de saída. ")
+      escreval ("    [4] para extrato de depósito. ")
+      escreval ("    [5] para fazer saque.  ")
+      escreval ("    [6] Para sair.  ")
+      leia(opcao)
+   senao
+      escreval ("    ERRO! Usuário não encontrado   ")
+      escreval ("    Gostaria de tentar novamente [ SIM/NÃO ] ")
+      leia (sair)
+      
+      se (sair = "SIM") entao
+         limpatela
+      fimse
+
+      se (sair = "NÃO") ou (sair = "NAO") entao
+         escreval ("    Encerrando o programa com segurança.  ")
+         fimalgoritmo
+      fimse
+
+      se (sair <> "NÃO") e (sair <> "NAO") e (sair <> "SIM")entao
+         repita
+            escreval ("    Erro! Digite apenas [ SIM/NÃO ] para continuar.  ")
+            leia (sair)
+            sair <- maiusc(sair)
+
+            se (sair = "NÃO") ou (sair = "NAO") entao
+               escreval ("    Encerrando o programa com segurança.  ")
+               fimalgoritmo
+            fimse
+         ate (sair = "SIM")
+   fimse
+fimenquanto
+
+   escolha opcao
+      caso 1
+
+      caso 2
+          escreval (saldo)
+          
+      caso 3
+   
+      caso 4
+   
+      caso 5
+          escreval ("estou aqui 2")
+          leia (opcao)
+      outrocaso
+          escreval (" erro")
+
+   fimescolha
+
+   escreval ("estou aqui")
+   
 fimalgoritmo
 
 
