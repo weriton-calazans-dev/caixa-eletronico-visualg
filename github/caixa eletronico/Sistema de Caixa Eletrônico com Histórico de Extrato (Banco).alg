@@ -24,6 +24,8 @@ var
    entrada_agencia: caractere
    entrada_conta: caractere
    entrada_senha: caractere
+   deposito: caractere
+   aux: real
    posicao: inteiro
    i:inteiro
    continuar, encontrado: logico
@@ -88,7 +90,7 @@ inicio
    valido <- verdadeiro
    para i <- 1 ate compr(numero) faca
       codigo <- asc(copia(numero, i, 1))
-      se (codigo < 48) ou (codigo > 57) entao
+      se (codigo < 48) ou (codigo > 57) ou (codigo = 44) ou (codigo = 46)entao
           valido <- falso
       fimse
    fimpara
@@ -100,6 +102,7 @@ var
    chave_nome: caractere
    chave_conta: caractere
    chave_senha: caractere
+   chave_saldo: real
    i, j: inteiro
 inicio
    para i <- 2 ate 5 faca
@@ -107,6 +110,7 @@ inicio
          chave_nome <- nome[i]
          chave_conta <- conta[i]
          chave_senha <- senha[i]
+         chave_saldo <- saldo[i]
 
          j <- (i - 1)
          enquanto (j > 0) faca
@@ -114,6 +118,7 @@ inicio
                nome[j + 1] <- nome[j]
                conta[j + 1] <- conta[j]
                senha[j + 1] <- senha[j]
+               saldo[j + 1] <- saldo[j]
 
                j <- (j - 1)
             senao
@@ -124,6 +129,7 @@ inicio
             nome[j + 1] <- chave_nome
             conta[j + 1] <- chave_conta
             senha[j + 1] <- chave_senha
+            saldo[j + 1] <- chave_saldo
       fimse
    fimpara
 fimprocedimento
@@ -283,6 +289,7 @@ repita
 ate (sair = "NAO")
 
 enquanto (entrada_usuario = "1") faca
+  repita
    limpatela
    escreval ("-------------------------------")
    escreval ("    Digite o nome do usuário   ")
@@ -315,12 +322,14 @@ enquanto (entrada_usuario = "1") faca
       escreval ("--------------------------------")
       escreval ("    Bem-Vindo ",nome[posicao])
       escreval ("    [1] Para ver saldo.   ")
-      escreval ("    [2] Para fazer uma transferência via pix.  ")
-      escreval ("    [3] para extrato de saída. ")
-      escreval ("    [4] para extrato de depósito. ")
-      escreval ("    [5] para fazer saque.  ")
-      escreval ("    [6] Para sair.  ")
+      escreval ("    [2] Para fazer deposito  ")
+      escreval ("    [3] Para fazer uma transferência via pix.  ")
+      escreval ("    [4] para extrato de saída. ")
+      escreval ("    [5] para extrato de depósito. ")
+      escreval ("    [6] para fazer saque.  ")
+      escreval ("    [7] Para sair.  ")
       leia(opcao)
+      sair <- "NÃO"
    senao
       escreval ("    ERRO! Usuário não encontrado   ")
       escreval ("    Gostaria de tentar novamente [ SIM/NÃO ] ")
@@ -328,27 +337,77 @@ enquanto (entrada_usuario = "1") faca
       
       validaSim()
    fimse
-
-
+  ate ((sair = "NAO") ou (sair = "NÃO"))
+ repita
    escolha opcao
       caso 1
-
+          limpatela
+          escreval ("----------------------------------------------------------------")
+          escreval ("    Olá ",nome[posicao]," O seu saldo atual é: R$ ",saldo[posicao]:5:2)
+          escreval ("----------------------------------------------------------------")
+          escreval ("    [1] Para fazer deposito  ")
+          escreval ("    [2] Para fazer uma transferência via pix.  ")
+          escreval ("    [3] para extrato de saída. ")
+          escreval ("    [4] para extrato de depósito. ")
+          escreval ("    [5] para fazer saque.  ")
+          escreval ("    [6] Para sair.  ")
+          leia(opcao)
+           para i <- 1 ate 6 faca
+              se (opcao = i ) entao
+                 opcao <- opcao + 1
+                 interrompa
+              fimse
+           fimpara
       caso 2
-          escreval (saldo)
+          limpatela
+          escreval ("-------------------------------------")
+          escreval ("    Bem-Vindo a área de deposito   ")
+        repita
+          escreval ("-------------------------------------")
+          escreval ("    Quanto vai deposita   ")
+          leia (deposito)
           
+          se (validaNumero(deposito))entao
+                aux <- caracpnum(deposito)
+                saldo[posicao] <- aux + saldo[posicao]
+                sair <- "NAO"
+          senao
+             escreval ("    Erro! Valor inválido. Digite apenas número. ")
+             escreval ("")
+             escreval ("    Gostaria de tentar novamente? [ SIM/NÃO ] ")
+             leia(sair)
+             validaSim()
+             limpatela
+          fimse
+        ate ((sair = "NÃO") ou (sair = "NAO"))
+        
+          limpatela
+          escreval ("------------------------------------")
+          escreval ("    Deposito comcluido com sucesso  ")
+          escreval ("------------------------------------")
+          escreval ("    [1] Para ver saldo.   ")
+          escreval ("    [2] Para fazer deposito  ")
+          escreval ("    [3] Para fazer uma transferência via pix.  ")
+          escreval ("    [4] para extrato de saída. ")
+          escreval ("    [5] para extrato de depósito. ")
+          escreval ("    [6] para fazer saque.  ")
+          escreval ("    [7] Para sair.  ")
+          leia(opcao)
       caso 3
    
       caso 4
    
       caso 5
-          escreval ("estou aqui 2")
-          leia (opcao)
+
+      caso 6
+      
       outrocaso
           escreval (" erro")
 
    fimescolha
+ ate (opcao = 7)
 fimenquanto
-   escreval ("estou aqui")
+   escreval ("    Encerrando o programa com segurança  ")
    
 fimalgoritmo
 
