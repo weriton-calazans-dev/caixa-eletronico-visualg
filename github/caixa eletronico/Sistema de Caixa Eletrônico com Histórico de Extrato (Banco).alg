@@ -13,25 +13,53 @@ var
    nome: vetor [1..5] de caractere
    conta: vetor [1..5] de caractere
    senha: vetor [1..5] de caractere
+   saldo: vetor [1..5] de real
    agencia: caractere
    cadastro: caractere
    cadastroSenha: caractere
    sair: caractere
    opcao: inteiro
+   conta_gerada:inteiro
    entrada_usuario: caractere
    entrada_agencia: caractere
    entrada_conta: caractere
    entrada_senha: caractere
    posicao: inteiro
-   saldo: real
    i:inteiro
-   continuar,encontrado: logico
+   continuar, encontrado: logico
    
 procedimento opcaoEntrada()
 inicio
    escreval ("    [1] Para acessar sua conta. ")
+   escreval ("    [2] para sair  ")
    leia(entrada_usuario)
 fimprocedimento
+
+procedimento  validaSim()
+inicio
+   se (sair = "SIM") entao
+      limpatela
+   fimse
+
+   se (sair = "NAO") ou (sair = "NÃO") entao
+      escreval ("    Encerrando o programa com segurança  ")
+      fimalgoritmo
+   fimse
+
+   se (sair <> "SIM") e (sair <> "NAO") e (sair <> "NÃO") entao
+      repita
+         escreval ("    Erro! digite apenas [ SIM/NÃO ] para tentar novamente. ")
+         leia (sair)
+         sair <- maiusc(sair)
+
+         se (sair = "NÃO") ou (sair = "NAO") entao
+            escreval ("    Encerrando o programa com segurança  ")
+            fimalgoritmo
+         fimse
+      ate (sair = "SIM")
+   fimse
+fimprocedimento
+
 funcao validaLetras(texto: caractere) : logico
 var
    proibidos: caractere
@@ -102,14 +130,14 @@ fimprocedimento
 
 inicio
 
-   //área de cadastrar none do usuário
+
      agencia <- "0001"
-     conta[1] <- "12345"
-     conta[2] <- "12346"
-     conta[3] <- "12347"
-     conta[4] <- "12348"
-     conta[5] <- "12349"
-     saldo <- 3000,00
+     conta_gerada <- 12344
+    
+    para i <- 1 ate 5 faca
+       saldo[i] <- 0
+    fimpara
+ //área de cadastrar none do usuário
 repita
    continuar <- falso
    repita
@@ -128,6 +156,8 @@ repita
          para i <- 1 ate 5 faca
             se (nome[i] = "") entao
                nome[i] <- cadastro
+               conta_gerada <- conta_gerada + 1
+               conta[i] <-numpcarac(conta_gerada)
                interrompa
             fimse
          fimpara
@@ -139,27 +169,7 @@ repita
          leia(sair)
          sair <- maiusc(sair)
 
-         se (sair = "SIM") entao
-            limpatela
-         fimse
-               
-         se (sair = "NAO") ou (sair = "NÃO") entao
-            escreval ("    Encerrando o programa com segurança  ")
-            fimalgoritmo
-         fimse
-               
-         se (sair <> "SIM") e (sair <> "NAO") e (sair <> "NÃO") entao
-            repita
-               escreval ("    Erro! digite apenas [ SIM/NÃO ] para tentar novamente. ")
-               leia (sair)
-               sair <- maiusc(sair)
-
-               se (sair = "NÃO") ou (sair = "NAO") entao
-                  escreval ("    Encerrando o programa com segurança  ")
-                  fimalgoritmo
-               fimse
-            ate (sair = "SIM")
-         fimse
+         validaSim()
       fimse
    ate (continuar = verdadeiro)
    //área de cadastrar senha
@@ -187,28 +197,7 @@ repita
          leia (sair)
          sair <- maiusc(sair)
          
-         se (sair = "SIM") entao
-            limpatela
-         fimse
-         
-         se (sair = "NÃO") ou (sair = "NAO") entao
-            escreval ("    Encerrando o programa com segurança.  ")
-            fimalgoritmo
-         fimse
-         
-         se (sair <> "NÃO") e (sair <> "NAO") e (sair <> "SIM")entao
-            repita
-               escreval ("    Erro! Digite apenas [ SIM/NÃO ] para continuar.  ")
-               leia (sair)
-               sair <- maiusc(sair)
-               
-               se (sair = "NÃO") ou (sair = "NAO") entao
-                  escreval ("    Encerrando o programa com segurança.  ")
-                  fimalgoritmo
-               fimse
-               
-            ate (sair = "SIM")
-         fimse
+         validaSim()
       fimse
    ate (continuar = verdadeiro)
    
@@ -230,20 +219,63 @@ repita
    escreval ("  Para fazer novo cadastro digite [ SIM/NÃO ] ")
    leia(sair)
    sair <- maiusc(sair)
+   
    se (sair = "SIM") entao
       limpatela
    fimse
+   
    se (sair = "NAO") ou (sair = "NÃO") entao
      opcaoEntrada()
+     
+     se (entrada_usuario = "2") entao
+        escreval ("    Encerrando o programa com segurança  ")
+        fimalgoritmo
+     fimse
+   
+     repita
+        se(entrada_usuario <> "1") e (entrada_usuario <> "2") entao
+           escreval ("   Digite apena [ 1/2 ] ")
+           leia (entrada_usuario)
+           
+           se (entrada_usuario = "2") entao
+              escreval ("    Encerrando o programa com segurança  ")
+              fimalgoritmo
+           fimse
+        fimse
+     ate (entrada_usuario = "1")
    fimse
    se (sair <> "NÃO") e (sair <> "NAO") e (sair <> "SIM")entao
       repita
-         escreval ("    Erro! Digite apenas [ SIM/NÃO ] para continuar.  ")
+         escreval ("    Erro! Digite apenas [ SIM/NÃO ] para fazer novo cadastro.  ")
          leia (sair)
          sair <- maiusc(sair)
 
          se (sair = "NÃO") ou (sair = "NAO") entao
            opcaoEntrada()
+           
+           se (entrada_usuario = "1") entao
+              sair <- "SIM"
+           fimse
+           
+           se (entrada_usuario = "2") entao
+              escreval ("    Encerrando o programa com segurança  ")
+              fimalgoritmo
+           fimse
+
+           repita
+              se (entrada_usuario <> "1") e (entrada_usuario <> "2") entao
+                 escreval ("   Digite apena [ 1/2 ] ")
+                 leia (entrada_usuario)
+
+                 se (entrada_usuario = "1") entao
+                     sair <- "SIM"
+                 fimse
+                 se (entrada_usuario = "2") entao
+                    escreval ("    Encerrando o programa com segurança  ")
+                    fimalgoritmo
+                 fimse
+              fimse
+           ate (entrada_usuario = "1")
          fimse
       ate (sair = "SIM")
    fimse
@@ -267,42 +299,17 @@ enquanto (entrada_usuario = "1") faca
 
    entrada_usuario <- maiusc(entrada_usuario)
    encontrado <- falso
-   se (validaLetras(entrada_usuario)) e (entrada_usuario <> "") entao
+
+   se (entrada_agencia = agencia) entao
       para i <- 1 ate 5 faca
-         se (entrada_usuario = nome[i]) entao
+         se (entrada_usuario = maiusc(nome[i])) e (entrada_conta = conta[i]) e (entrada_senha = senha[i]) entao
             encontrado <- verdadeiro
             posicao <- i
             interrompa
          fimse
       fimpara
    fimse
-
-   se (validaLetras(entrada_agencia) = verdadeiro) entao
-      para i <- 1 ate 5 faca
-         se (entrada_agencia = agencia) entao
-            encontrado <- verdadeiro
-            interrompa
-         fimse
-      fimpara
-   fimse
-
-   se (validaNumero(entrada_conta) = verdadeiro) entao
-      para i <- 1 ate 5 faca
-         se (entrada_conta = conta[i]) entao
-            encontrado <- verdadeiro
-            interrompa
-         fimse
-      fimpara
-   fimse
-
-   se (validaNumero(entrada_senha) = verdadeiro) entao
-      para i <- 1 ate 5 faca
-         se (entrada_senha = senha[i]) entao
-            encontrado <- verdadeiro
-            interrompa
-         fimse
-      fimpara
-   fimse
+   
    se (encontrado = verdadeiro) entao
       limpatela
       escreval ("--------------------------------")
@@ -319,28 +326,9 @@ enquanto (entrada_usuario = "1") faca
       escreval ("    Gostaria de tentar novamente [ SIM/NÃO ] ")
       leia (sair)
       
-      se (sair = "SIM") entao
-         limpatela
-      fimse
-
-      se (sair = "NÃO") ou (sair = "NAO") entao
-         escreval ("    Encerrando o programa com segurança.  ")
-         fimalgoritmo
-      fimse
-
-      se (sair <> "NÃO") e (sair <> "NAO") e (sair <> "SIM")entao
-         repita
-            escreval ("    Erro! Digite apenas [ SIM/NÃO ] para continuar.  ")
-            leia (sair)
-            sair <- maiusc(sair)
-
-            se (sair = "NÃO") ou (sair = "NAO") entao
-               escreval ("    Encerrando o programa com segurança.  ")
-               fimalgoritmo
-            fimse
-         ate (sair = "SIM")
+      validaSim()
    fimse
-fimenquanto
+
 
    escolha opcao
       caso 1
@@ -359,7 +347,7 @@ fimenquanto
           escreval (" erro")
 
    fimescolha
-
+fimenquanto
    escreval ("estou aqui")
    
 fimalgoritmo
