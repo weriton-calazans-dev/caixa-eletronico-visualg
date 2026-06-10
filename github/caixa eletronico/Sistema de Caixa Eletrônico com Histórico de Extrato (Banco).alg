@@ -29,7 +29,7 @@ var
    aux: real
    posicao: inteiro
    i:inteiro
-   continuar, encontrado: logico
+   continuar, encontrado, erro: logico
    
 procedimento opcaoEntrada()
 inicio
@@ -323,8 +323,12 @@ inicio
    
          se (encontrado = verdadeiro) entao
             limpatela
-            escreval ("--------------------------------")
+            escreval ("-----------------------------------------")
             escreval ("    Bem-Vindo ",nome[posicao])
+            escreval ("-----------------------------------------")
+            escreval ("-----------------------------------------")
+            escreval ("              Menu Inicial               ")
+            escreval ("-----------------------------------------")
             escreval ("    [1] Para ver saldo.   ")
             escreval ("    [2] Para fazer deposito  ")
             escreval ("    [3] Para fazer uma transferência via pix.  ")
@@ -349,6 +353,10 @@ inicio
                escreval ("----------------------------------------------------------------")
                escreval ("    Olá ",nome[posicao]," O seu saldo atual é: R$ ",saldo[posicao]:5:2)
                escreval ("----------------------------------------------------------------")
+               escreval ("")
+               escreval ("-----------------------------------------")
+               escreval ("              Menu Inicial               ")
+               escreval ("-----------------------------------------")
                escreval ("    [1] Para fazer deposito  ")
                escreval ("    [2] Para fazer uma transferência via pix.  ")
                escreval ("    [3] para extrato de saída. ")
@@ -391,6 +399,10 @@ inicio
                escreval ("------------------------------------")
                escreval ("    Deposito comcluido com sucesso  ")
                escreval ("------------------------------------")
+               escreval ("")
+               escreval ("-----------------------------------------")
+               escreval ("              Menu Inicial               ")
+               escreval ("-----------------------------------------")
                escreval ("    [1] Para ver saldo.   ")
                escreval ("    [2] Para fazer deposito  ")
                escreval ("    [3] Para fazer uma transferência via pix.  ")
@@ -401,74 +413,118 @@ inicio
                leia(opcao)
                
             caso 3
-               limpatela
-               escreval ("----------------------------------------")
-               escreval ("    Bem-Vindo a área de transferência   ")
-               escreval ("   Digite o nome da pessoa que vai receber  ")
-               leia (entrada_usuario)
-               escreval ("   Digite a agencia da pessoa que vai receber  ")
-               leia (entrada_agencia)
-               escreval ("   Digite a conta da pessoa que vai receber  ")
-               leia (entrada_conta)
-               escreval ("   Digite o valor da transferência  ")
-               leia (transferencia)
-               se (validaLetras(entrada_usuario)) e (validaNumero(entrada_agencia)) e (validaNumero(transferencia)) e (validaNumero(entrada_conta)) entao
-                  repita
-                     escreval ("----------------------------------------")
-                     escreval ("    Confira os dados da transferência   ")
-                     escreval ("----------------------------------------")
-                     escreval ("    Nome: ",entrada_usuario)
-                     escreval ("    Agencia: ",entrada_agencia)
-                     escreval ("    conta: ",entrada_conta)
-                     escreval ("    Valor: ",transferencia)
-                     escreval ("-------------------------------------------------")
-                     escreval ("  Para confima a transferência digite sua senha. ")
-                     leia(entrada_senha)
-                           aux <- caracpnum(transferencia)
-                     se (senha[posicao] = entrada_senha) e (saldo[posicao] > aux) entao
-                        aux <- caracpnum(transferencia)
-                        saldo[posicao] <- saldo[posicao] - aux
-                        escreval ("-----------------------------------------")
-                        escreval ("    Transferência efetuada com sucesso.  ")
-                        escreval ("-----------------------------------------")
+               repita
+                  limpatela
+                  escreval ("----------------------------------------")
+                  escreval ("    Bem-Vindo a área de transferência   ")
+                  escreval ("   Digite o nome da pessoa que vai receber  ")
+                  leia (entrada_usuario)
+                  escreval ("   Digite a agencia da pessoa que vai receber  ")
+                  leia (entrada_agencia)
+                  escreval ("   Digite a conta da pessoa que vai receber  ")
+                  leia (entrada_conta)
+                  escreval ("   Digite o valor da transferência  ")
+                  leia (transferencia)
+               
+                  continuar <- falso
+                  erro <- verdadeiro
+                
+                  se validaLetras(entrada_usuario) entao
+                     se (validaNumero(entrada_agencia)) e (compr(entrada_agencia) = 4) entao
+                        se (validaNumero(entrada_conta)) e (compr(entrada_conta) = 5) entao
+                           se validaNumero(transferencia) entao
+                              continuar <- verdadeiro
+                           senao
+                              erro <- falso
+                           fimse
+                        senao
+                           erro <- falso
+                        fimse
+                     senao
+                        erro <- falso
+                     fimse
+                  senao
+                     erro <- falso
+                  fimse
+               
+                  se (erro = verdadeiro) entao
+                     repita
+                        limpatela
+                        escreval ("----------------------------------------")
+                        escreval ("    Confira os dados da transferência   ")
+                        escreval ("----------------------------------------")
                         escreval ("    Nome: ",entrada_usuario)
                         escreval ("    Agencia: ",entrada_agencia)
                         escreval ("    conta: ",entrada_conta)
                         escreval ("    Valor: ",transferencia)
-                        escreval ("-----------------------------------------")
+                        escreval ("-------------------------------------------------")
+                        escreval ("  Para confima a transferência digite sua senha. ")
+                        leia(entrada_senha)
+                        aux <- caracpnum(transferencia)
                         sair <- "NAO"
-                     senao
                         se (senha[posicao] <> entrada_senha) entao
                            escreval ("    Erro! Senha inválida    ")
                            escreval ("    Gostaria de tentar novamente? [ SIM/NÃO ] ")
                            leia (sair)
                            validaSim()
-                        senao
+                        fimse
+                     
+                        se (saldo[posicao] < aux) entao
                            escreval ("    Erro! Saldo insuficiente.    ")
                            escreval ("    Seu saldo atual é de: R$ ",saldo[posicao])
                            escreval ("    Gostaria de tentar novamente? [ SIM/NÃO ] ")
                            leia (sair)
                            validaSim()
+                           escreval ("   Digite [2] Para fazer deposito  ")
+                           leia(opcao)
+                           se (sair = "SIM") e (opcao <> 2) e (saldo[posicao] = 0) entao
+                                escreval ("   Saldo insuficiente. Finalizando o programa com segurança  ")
+                                fimalgoritmo
+                           senao
+                              sair <- "NAO"
+                              erro <- falso
+                           fimse
                         fimse
-                     fimse
-                  ate (sair = "NAO")
+                     ate (sair = "NAO")
+               
+                  senao
+                     escreval ("    Erro! Dados inválido.  ")
+                     escreval ("    Gostaria de tentar novamente? [ SIM/NÃO ] ")
+                     leia (sair)
+                     validaSim()
+                  fimse
+               ate (sair = "NAO") e (erro = verdadeiro)
+               
+               se (senha[posicao] = entrada_senha) e (saldo[posicao] >= aux) entao
+                  aux <- caracpnum(transferencia)
+                  saldo[posicao] <- saldo[posicao] - aux
+                  limpatela
+                  escreval ("-----------------------------------------")
+                  escreval ("    Transferência efetuada com sucesso.  ")
+                  escreval ("-----------------------------------------")
+                  escreval ("    Nome: ",entrada_usuario)
+                  escreval ("    Agencia: ",entrada_agencia)
+                  escreval ("    conta: ",entrada_conta)
+                  escreval ("    Valor: ",transferencia)
+                  escreval ("-----------------------------------------")
+                  escreval ("              Menu Inicial               ")
+                  escreval ("-----------------------------------------")
+                  escreval ("    [1] Para ver saldo.   ")
+                  escreval ("    [2] Para fazer deposito  ")
+                  escreval ("    [3] Para fazer uma transferência via pix.  ")
+                  escreval ("    [4] para extrato de saída. ")
+                  escreval ("    [5] para extrato de depósito. ")
+                  escreval ("    [6] para fazer saque.  ")
+                  escreval ("    [7] Para sair.  ")
+                  leia(opcao)
                fimse
 
-               escreval ("    [1] Para ver saldo.   ")
-               escreval ("    [2] Para fazer deposito  ")
-               escreval ("    [3] Para fazer uma transferência via pix.  ")
-               escreval ("    [4] para extrato de saída. ")
-               escreval ("    [5] para extrato de depósito. ")
-               escreval ("    [6] para fazer saque.  ")
-               escreval ("    [7] Para sair.  ")
-               leia(opcao)
-
             caso 4
-   
+               escreval (" estou no 4")
             caso 5
-
+               escreval (" estou no 5")
             caso 6
-      
+               escreval (" estou no 6")
             outrocaso
                escreval (" erro")
 
