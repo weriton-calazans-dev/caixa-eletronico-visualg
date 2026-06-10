@@ -13,13 +13,16 @@ var
    nome: vetor [1..5] de caractere
    conta: vetor [1..5] de caractere
    senha: vetor [1..5] de caractere
+   nomeRecebido: vetor [1..5] de caractere
    saldo: vetor [1..5] de real
+   extratoSaida:vetor [1..5] de real
    agencia: caractere
    cadastro: caractere
    cadastroSenha: caractere
    sair: caractere
    opcao: inteiro
    conta_gerada:inteiro
+   eu: caractere
    entrada_usuario: caractere
    entrada_agencia: caractere
    entrada_conta: caractere
@@ -104,6 +107,7 @@ var
    chave_conta: caractere
    chave_senha: caractere
    chave_saldo: real
+   chave_extratoSaida: real
    i, j: inteiro
 inicio
    para i <- 2 ate 5 faca
@@ -112,7 +116,8 @@ inicio
          chave_conta <- conta[i]
          chave_senha <- senha[i]
          chave_saldo <- saldo[i]
-
+         chave_extratoSaida <- extratoSaida[i]
+         
          j <- (i - 1)
          enquanto (j > 0) faca
             se(nome[j] > chave_nome) e (nome[j] <> "") entao
@@ -120,7 +125,8 @@ inicio
                conta[j + 1] <- conta[j]
                senha[j + 1] <- senha[j]
                saldo[j + 1] <- saldo[j]
-
+               extratoSaida[j + 1] <- extratoSaida[j]
+               
                j <- (j - 1)
             senao
                interrompa
@@ -131,10 +137,33 @@ inicio
             conta[j + 1] <- chave_conta
             senha[j + 1] <- chave_senha
             saldo[j + 1] <- chave_saldo
+            extratoSaida[j + 1] <- chave_extratoSaida
       fimse
    fimpara
 fimprocedimento
 
+procedimento inverte()
+var
+   aux2: caractere
+   aux: real
+   esq, dir: inteiro
+inicio
+   esq <- 1
+   dir <- 5
+   enquanto (esq < dir) faca
+      aux <- extratoSaida[esq]
+      extratoSaida[esq] <- extratoSaida[dir]
+      extratoSaida[dir] <- aux
+      
+      aux2 <- nomeRecebido[esq]
+      nomeRecebido[esq] <- nomeRecebido[dir]
+      nomeRecebido[dir] <- aux2
+      
+      esq <- esq + 1
+      dir <- dir - 1
+   fimenquanto
+
+fimprocedimento
 inicio
 
 
@@ -462,6 +491,7 @@ inicio
                         leia(entrada_senha)
                         aux <- caracpnum(transferencia)
                         sair <- "NAO"
+
                         se (senha[posicao] <> entrada_senha) entao
                            escreval ("    Erro! Senha inválida    ")
                            escreval ("    Gostaria de tentar novamente? [ SIM/NÃO ] ")
@@ -498,6 +528,19 @@ inicio
                se (senha[posicao] = entrada_senha) e (saldo[posicao] >= aux) entao
                   aux <- caracpnum(transferencia)
                   saldo[posicao] <- saldo[posicao] - aux
+                  para i <- 1 ate 5 faca
+                     se (extratoSaida[i] = 0) entao
+                        extratoSaida[i] <- aux
+                        interrompa
+                     fimse
+                  fimpara
+                  
+                  para i <- 1 ate 5 faca
+                     se (nomeRecebido[i] = "") entao
+                        nomeRecebido[i] <- entrada_usuario
+                        interrompa
+                     fimse
+                  fimpara
                   limpatela
                   escreval ("-----------------------------------------")
                   escreval ("    Transferência efetuada com sucesso.  ")
@@ -520,7 +563,49 @@ inicio
                fimse
 
             caso 4
-               escreval (" estou no 4")
+               repita
+                  limpatela
+                  escreval ("---------------------------------------------------------------")
+                  escreval ("               Bem-Vindo a área de extrato de saida  ")
+                  escreval ("---------------------------------------------------------------")
+                  escreval ("    Digite [1] Para extrato do mais recente para o mais antigo ")
+                  escreval ("")
+                  escreval ("    Digite [2] Para extrato do mais antigo para o mais recente ")
+                  leia(opcao)
+               
+                  se (opcao = 1) entao
+                     inverte()
+                     para i <- 1 ate 5 faca
+                        se (extratoSaida[i] <> 0) entao
+                           escreval ("  Deposito efetuado para: ",nomeRecebido[i]," no valor: ",extratoSaida[i])
+                        fimse
+                     fimpara
+                     sair <- "NAO"
+                     inverte()
+                  fimse
+                  se (opcao = 2) entao
+                     para i <- 1 ate 5 faca
+                       se (extratoSaida[i] <> 0) entao
+                          escreval("   Deposito efetuado para: ",nomeRecebido[i]," no valor: ",extratoSaida[i])
+                       fimse
+                    fimpara
+                    sair <- "NAO"
+                 fimse
+                 se (opcao <> 1) e (opcao <> 2) entao
+                    escreval ("    Opção inválida  ")
+                    escreval ("    Gostaria de tentar novamente? [ SIM/NÃO ] ")
+                    leia (sair)
+                    validaSim()
+                 fimse
+              ate (sair = "NAO")
+                 escreval ("    [1] Para ver saldo.   ")
+                 escreval ("    [2] Para fazer deposito  ")
+                 escreval ("    [3] Para fazer uma transferência via pix.  ")
+                 escreval ("    [4] para extrato de saída. ")
+                 escreval ("    [5] para extrato de depósito. ")
+                 escreval ("    [6] para fazer saque.  ")
+                 escreval ("    [7] Para sair.  ")
+                 leia(opcao)
             caso 5
                escreval (" estou no 5")
             caso 6
