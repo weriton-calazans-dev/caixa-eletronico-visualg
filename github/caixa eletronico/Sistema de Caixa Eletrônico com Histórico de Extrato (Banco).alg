@@ -16,6 +16,7 @@ var
    nomeRecebido: vetor [1..5] de caractere
    saldo: vetor [1..5] de real
    extratoSaida:vetor [1..5] de real
+   extratoDeposito: vetor [1..5] de real
    agencia: caractere
    cadastro: caractere
    cadastroSenha: caractere
@@ -27,8 +28,8 @@ var
    entrada_agencia: caractere
    entrada_conta: caractere
    entrada_senha: caractere
-   deposito: caractere
    transferencia: caractere
+   deposito: caractere
    aux: real
    posicao: inteiro
    i:inteiro
@@ -108,6 +109,7 @@ var
    chave_senha: caractere
    chave_saldo: real
    chave_extratoSaida: real
+   chave_extratoDeposito: real
    i, j: inteiro
 inicio
    para i <- 2 ate 5 faca
@@ -117,6 +119,7 @@ inicio
          chave_senha <- senha[i]
          chave_saldo <- saldo[i]
          chave_extratoSaida <- extratoSaida[i]
+         chave_extratoDeposito <- extratoDeposito[i]
          
          j <- (i - 1)
          enquanto (j > 0) faca
@@ -126,6 +129,7 @@ inicio
                senha[j + 1] <- senha[j]
                saldo[j + 1] <- saldo[j]
                extratoSaida[j + 1] <- extratoSaida[j]
+               extratoDeposito[j + 1] <- extratoDeposito[j]
                
                j <- (j - 1)
             senao
@@ -138,12 +142,14 @@ inicio
             senha[j + 1] <- chave_senha
             saldo[j + 1] <- chave_saldo
             extratoSaida[j + 1] <- chave_extratoSaida
+            extratoDeposito[j + 1] <- chave_extratoDeposito
       fimse
    fimpara
 fimprocedimento
 
 procedimento inverte()
 var
+   aux3: real
    aux2: caractere
    aux: real
    esq, dir: inteiro
@@ -158,6 +164,10 @@ inicio
       aux2 <- nomeRecebido[esq]
       nomeRecebido[esq] <- nomeRecebido[dir]
       nomeRecebido[dir] <- aux2
+      
+      aux3 <- extratoDeposito[esq]
+      extratoDeposito[esq] <- extratoDeposito[dir]
+      extratoDeposito[dir] <- aux3
       
       esq <- esq + 1
       dir <- dir - 1
@@ -413,6 +423,12 @@ inicio
                   se (validaNumero(deposito))entao
                      aux <- caracpnum(deposito)
                      saldo[posicao] <- aux + saldo[posicao]
+                     para i <- 1 ate 5 faca
+                        se (extratoDeposito[i] = 0) entao
+                           extratoDeposito[i] <- aux
+                           interrompa
+                        fimse
+                     fimpara
                      sair <- "NAO"
                   senao
                      escreval ("    Erro! Valor inválido. Digite apenas número. ")
@@ -607,7 +623,59 @@ inicio
                  escreval ("    [7] Para sair.  ")
                  leia(opcao)
             caso 5
-               escreval (" estou no 5")
+               repita
+                  limpatela
+                  escreval ("---------------------------------------------------------------")
+                  escreval ("               Bem-Vindo a área de extrato de depodito  ")
+                  escreval ("---------------------------------------------------------------")
+                  escreval ("    Digite [1] Para extrato do mais recente para o mais antigo ")
+                  escreval ("")
+                  escreval ("    Digite [2] Para extrato do mais antigo para o mais recente ")
+                  leia(opcao)
+
+                  se (opcao = 1) entao
+                     inverte()
+                     aux <- 0
+                     para i <- 1 ate 5 faca
+                        se (extratoDeposito[i] <> 0) entao
+                           aux <- (extratoDeposito[i] + aux)
+                           escreval ("  Depositos efetuado: ",extratoDeposito[i])
+                        fimse
+                     fimpara
+                     escreval ("")
+                     escreval ("O total de deposito foi: ",aux)
+                     sair <- "NAO"
+                     inverte()
+                  fimse
+                  se (opcao = 2) entao
+                     aux <- 0
+                     para i <- 1 ate 5 faca
+                        se (extratoDeposito[i] <> 0) entao
+                           aux <- (extratoDeposito[i] + aux)
+                           escreval("   Depositos efetuado: ",extratoDeposito[i])
+                        fimse
+                     fimpara
+                     escreval ("")
+                     escreval ("O total de deposito foi: ",aux)
+                     sair <- "NAO"
+                  fimse
+                  se (opcao <> 1) e (opcao <> 2) entao
+                     escreval ("    Opção inválida  ")
+                     escreval ("    Gostaria de tentar novamente? [ SIM/NÃO ] ")
+                     leia (sair)
+                     validaSim()
+                  fimse
+               ate (sair = "NAO")
+                  escreval ("_______________________________________________")
+                  escreval ("    [1] Para ver saldo.   ")
+                  escreval ("    [2] Para fazer deposito  ")
+                  escreval ("    [3] Para fazer uma transferência via pix.  ")
+                  escreval ("    [4] para extrato de saída. ")
+                  escreval ("    [5] para extrato de depósito. ")
+                  escreval ("    [6] para fazer saque.  ")
+                  escreval ("    [7] Para sair.  ")
+                  leia(opcao)
+                  
             caso 6
                escreval (" estou no 6")
             outrocaso
