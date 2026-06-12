@@ -13,11 +13,11 @@ var
    nome: vetor [1..5] de caractere
    conta: vetor [1..5] de caractere
    senha: vetor [1..5] de caractere
-   nomeRecebido: vetor [1..5] de caractere
-   saque: vetor [1..5] de caractere
    saldo: vetor [1..5] de real
-   extratoSaida:vetor [1..5] de real
-   extratoDeposito: vetor [1..5] de real
+   nomeRecebido: vetor [1..5, 1..5] de caractere
+   saque: vetor [1..5, 1..5] de caractere
+   extratoSaida:vetor [1..5, 1..5] de real
+   extratoDeposito: vetor [1..5, 1..5] de real
    agencia: caractere
    cadastro: caractere
    cadastroSenha: caractere
@@ -33,7 +33,7 @@ var
    deposito: caractere
    aux: real
    posicao: inteiro
-   i:inteiro
+   i, j, k:inteiro
    continuar, encontrado, erro: logico
 
 procedimento menuInicial()
@@ -106,15 +106,22 @@ fimfuncao
 funcao validaNumero (numero: caractere) : logico
 var
    valido: logico
-   i,codigo: inteiro
+   i, contador, codigo: inteiro
 inicio
+   contador <- 0
    valido <- verdadeiro
    para i <- 1 ate compr(numero) faca
       codigo <- asc(copia(numero, i, 1))
-      se (codigo < 48) ou (codigo > 57) ou (codigo = 44) ou (codigo = 46)entao
+      se (codigo < 48) ou (codigo > 57) entao
          valido <- falso
       fimse
+      se (codigo = 44) ou (codigo = 46) entao
+         contador <- contador + 1
+      fimse
    fimpara
+      se (contador >= 2) entao
+         valido <- falso
+      fimse
    
    retorne valido
 fimfuncao
@@ -124,11 +131,12 @@ var
    chave_nome: caractere
    chave_conta: caractere
    chave_senha: caractere
-   chave_saque: caractere
    chave_saldo: real
-   chave_extratoSaida: real
-   chave_extratoDeposito: real
-   i, j: inteiro
+   chave_saque: vetor [1..5] de caractere
+   chave_extratoSaida: vetor [1..5] de real
+   chave_extratoDeposito: vetor [1..5] de real
+   chave_nomeRecebido: vetor [1..5] de caractere
+   i, j, k: inteiro
 inicio
    para i <- 2 ate 5 faca
       se (nome[i] <> "") entao
@@ -136,10 +144,13 @@ inicio
          chave_conta <- conta[i]
          chave_senha <- senha[i]
          chave_saldo <- saldo[i]
-         chave_extratoSaida <- extratoSaida[i]
-         chave_extratoDeposito <- extratoDeposito[i]
-         chave_saque <- saque[i]
-
+         para k <- 1 ate 5 faca
+            chave_extratoSaida[k] <- extratoSaida[i, k]
+            chave_extratoDeposito[k] <- extratoDeposito[i, k]
+            chave_saque[k] <- saque[i, k]
+            chave_nomeRecebido[k] <- nomeRecebido[i, k]
+         fimpara
+         
          j <- (i - 1)
          enquanto (j > 0) faca
             se (nome[j] > chave_nome) e (nome[j] <> "") entao
@@ -147,10 +158,13 @@ inicio
                conta[j + 1] <- conta[j]
                senha[j + 1] <- senha[j]
                saldo[j + 1] <- saldo[j]
-               extratoSaida[j + 1] <- extratoSaida[j]
-               extratoDeposito[j + 1] <- extratoDeposito[j]
-               saque[j + 1] <- saque[j]
-
+               para k <- 1 ate 5 faca
+                  nomeRecebido[j + 1, k] <- nomeRecebido[j, k]
+                  extratoSaida[j + 1, k] <- extratoSaida[j, k]
+                  extratoDeposito[j + 1, k] <- extratoDeposito[j, k]
+                  saque[j + 1, k] <- saque[j, k]
+               fimpara
+               
                j <- (j - 1)
             senao
                interrompa
@@ -161,9 +175,12 @@ inicio
          conta[j + 1] <- chave_conta
          senha[j + 1] <- chave_senha
          saldo[j + 1] <- chave_saldo
-         extratoSaida[j + 1] <- chave_extratoSaida
-         extratoDeposito[j + 1] <- chave_extratoDeposito
-         saque[j + 1] <- chave_saque
+         para k <- 1 ate 5 faca
+            nomeRecebido[j + 1, k] <- chave_nomeRecebido[k]
+            extratoSaida[j + 1, k] <- chave_extratoSaida[k]
+            extratoDeposito[j + 1, k] <- chave_extratoDeposito[k]
+            saque[j + 1, k] <- chave_saque[k]
+         fimpara
       fimse
    fimpara
 fimprocedimento
@@ -174,30 +191,33 @@ var
    aux3: real
    aux2: caractere
    aux: real
-   esq, dir: inteiro
+   esq, dir, i: inteiro
 inicio
-   esq <- 1
-   dir <- 5
-   enquanto (esq < dir) faca
-      aux <- extratoSaida[esq]
-      extratoSaida[esq] <- extratoSaida[dir]
-      extratoSaida[dir] <- aux
 
-      aux2 <- nomeRecebido[esq]
-      nomeRecebido[esq] <- nomeRecebido[dir]
-      nomeRecebido[dir] <- aux2
+   para i <- 1 ate 5 faca
+       esq <- 1
+       dir <- 5
+       enquanto (esq < dir) faca
+          aux <- extratoSaida[i, esq]
+          extratoSaida[i, esq] <- extratoSaida[i, dir]
+          extratoSaida[i, dir] <- aux
 
-      aux3 <- extratoDeposito[esq]
-      extratoDeposito[esq] <- extratoDeposito[dir]
-      extratoDeposito[dir] <- aux3
+          aux2 <- nomeRecebido[i, esq]
+          nomeRecebido[i, esq] <- nomeRecebido[i, dir]
+          nomeRecebido[i, dir] <- aux2
 
-      aux4 <- saque[esq]
-      saque[esq] <- saque[dir]
-      saque[dir] <- aux4
+          aux3 <- extratoDeposito[i, esq]
+          extratoDeposito[i, esq] <- extratoDeposito[i, dir]
+          extratoDeposito[i, dir] <- aux3
 
-      esq <- esq + 1
-      dir <- dir - 1
-   fimenquanto
+          aux4 <- saque[i, esq]
+          saque[i, esq] <- saque[i, dir]
+          saque[i, dir] <- aux4
+
+          esq <- esq + 1
+          dir <- dir - 1
+       fimenquanto
+    fimpara
 
 fimprocedimento
 inicio
@@ -443,8 +463,8 @@ inicio
                            aux <- caracpnum(deposito)
                            saldo[posicao] <- aux + saldo[posicao]
                            para i <- 1 ate 5 faca
-                              se (extratoDeposito[i] = 0) entao
-                                 extratoDeposito[i] <- aux
+                              se (extratoDeposito[posicao, i] = 0) entao
+                                 extratoDeposito[posicao, i] <- aux
                                  interrompa
                               fimse
                            fimpara
@@ -554,15 +574,15 @@ inicio
                         aux <- caracpnum(transferencia)
                         saldo[posicao] <- saldo[posicao] - aux
                         para i <- 1 ate 5 faca
-                           se (extratoSaida[i] = 0) entao
-                              extratoSaida[i] <- aux
+                           se (extratoSaida[posicao, i] = 0) entao
+                              extratoSaida[posicao, i] <- aux
                               interrompa
                            fimse
                         fimpara
 
                         para i <- 1 ate 5 faca
-                           se (nomeRecebido[i] = "") entao
-                              nomeRecebido[i] <- entrada_usuario
+                           se (nomeRecebido[posicao, i] = "") entao
+                              nomeRecebido[posicao, i] <- entrada_usuario
                               interrompa
                            fimse
                         fimpara
@@ -575,7 +595,7 @@ inicio
                         escreval ("    conta: ",entrada_conta)
                         escreval ("    Valor: ",transferencia)
                         menuInicial()
-                        fimse
+                     fimse
 
                   caso 4
                      repita
@@ -591,13 +611,13 @@ inicio
                         se (opcao = 1) entao
                            inverte()
                            para i <- 1 ate 5 faca
-                              se (extratoSaida[i] <> 0) entao
-                                 escreval ("  transferência efetuada para: ",nomeRecebido[i]," no valor: ",extratoSaida[i])
+                              se (extratoSaida[posicao, i] <> 0) entao
+                                 escreval ("  transferência efetuada para: ",nomeRecebido[posicao, i]," no valor: ",extratoSaida[posicao, i])
                               fimse
                            fimpara
                            para i <- 1 ate 5 faca
-                              se (saque[i] <> "") entao
-                                 escreval (" saque realizado: ",saque[i])
+                              se (saque[posicao, i] <> "") entao
+                                 escreval (" saque realizado: ",saque[posicao, i])
                               fimse
                            fimpara
                            sair <- "NAO"
@@ -605,13 +625,13 @@ inicio
                         fimse
                         se (opcao = 2) entao
                            para i <- 1 ate 5 faca
-                              se (extratoSaida[i] <> 0) entao
-                                 escreval("   transferência efetuada para: ",nomeRecebido[i]," no valor: ",extratoSaida[i])
+                              se (extratoSaida[posicao, i] <> 0) entao
+                                 escreval("   transferência efetuada para: ",nomeRecebido[posicao, i]," no valor: ",extratoSaida[posicao, i])
                               fimse
                            fimpara
                            para i <- 1 ate 5 faca
-                              se (saque[i] <> "") entao
-                                 escreval (" saque realizado: ",saque[i])
+                              se (saque[posicao, i] <> "") entao
+                                 escreval (" saque realizado: ",saque[posicao, i])
                               fimse
                            fimpara
                            sair <- "NAO"
@@ -636,25 +656,25 @@ inicio
                         leia(opcao)
 
                         se (opcao = 1) entao
-                           inverte()
+
                            aux <- 0
-                           para i <- 1 ate 5 faca
-                              se (extratoDeposito[i] <> 0) entao
-                                 aux <- (extratoDeposito[i] + aux)
-                                 escreval ("  Depósitos efetuados: ",extratoDeposito[i])
+                           para i <- 5 ate 1 passo -1 faca
+                              se (extratoDeposito[posicao, i] <> 0) entao
+                                 aux <- (extratoDeposito[posicao, i] + aux)
+                                 escreval ("  Depósitos efetuados: ",extratoDeposito[posicao, i])
                               fimse
                            fimpara
                            escreval ("")
                            escreval ("O total de depósito foi: ",aux)
                            sair <- "NAO"
-                           inverte()
+
                         fimse
                         se (opcao = 2) entao
                            aux <- 0
                            para i <- 1 ate 5 faca
-                              se (extratoDeposito[i] <> 0) entao
-                                 aux <- (extratoDeposito[i] + aux)
-                                 escreval("   Depósitos efetuados: ",extratoDeposito[i])
+                              se (extratoDeposito[posicao, i] <> 0) entao
+                                 aux <- (extratoDeposito[posicao, i] + aux)
+                                 escreval("   Depósitos efetuados: ",extratoDeposito[posicao, i])
                               fimse
                            fimpara
                            escreval ("")
@@ -699,8 +719,8 @@ inicio
                         se (continuar = verdadeiro) entao
                            saldo[posicao] <- saldo[posicao] - aux
                            para i <- 1 ate 5 faca
-                              se (saque[i] = "") entao
-                                 saque[i] <- numpcarac(aux)
+                              se (saque[posicao, i] = "") entao
+                                 saque[posicao, i] <- numpcarac(aux)
                                  interrompa
                               fimse
                            fimpara
